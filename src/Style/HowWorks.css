@@ -1,0 +1,107 @@
+.howworks {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+/* HERO */
+.top-section {
+  margin-top: 40px;
+}
+
+.top-section h1 {
+  font-size: 40px;
+}
+
+.top-section p {
+  max-width: 700px;
+  margin: auto;
+  color: #555;
+}
+
+/* STEPS */
+.journey {
+  margin-top: 70px;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+}
+
+.step {
+  width: 200px;
+}
+
+.circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid #1e88e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+/* WHY SECTION */
+
+.why {
+  margin-top: 80px;
+  background: black;
+  color: white;
+  padding: 50px;
+  border-radius: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.why-left {
+  width: 35%;
+  text-align: left;
+}
+
+.why-right {
+  width: 55%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.box {
+  background: #0f3d3e;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+/* CTA */
+
+.cta {
+  margin-top: 60px;
+  padding: 40px;
+  background: #d5e4ef;
+  border-radius: 15px;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.primary {
+  background: #1e88e5;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  margin-right: 10px;
+}
+
+.secondary {
+  background: black;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+}
