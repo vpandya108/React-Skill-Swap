@@ -1,9 +1,19 @@
 
 import React from "react";
 import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
+import ProfileCreate from "./ProfileCreate";
 import { FaUser, FaEnvelope, FaLock, FaGraduationCap } from "react-icons/fa";
 
 function SignUp() {
+  const navigate = useNavigate();
+
+  const handleSignUp = (e) => {
+    e.preventDefault(); // stop page refresh
+    // You can add validation here later
+    navigate("/ProfileCreate"); // redirect to profile creation page
+  };
+
   return (
     <div className="min-h-screen flex">
       
@@ -57,7 +67,7 @@ function SignUp() {
           </p>
 
           {/* FORM */}
-          <form className="space-y-4">
+          <form onSubmit={handleSignUp} className="space-y-4">
             
             {/* Name */}
             <div>
