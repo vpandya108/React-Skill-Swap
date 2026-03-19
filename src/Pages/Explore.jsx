@@ -26,6 +26,12 @@ function Explore() {
       learn: "Video Editing",
       badge: "Professional Photographer",
     },
+    {
+        name: "Sofia Lee",
+        teach: "Digital Marketing",
+        learn: "UX/UI Design",
+        badge: "Google Ads Certified",
+    },
   ];
 
   return (
@@ -82,7 +88,7 @@ function Explore() {
               </button>
 
               <button
-                onClick={() => navigate("/view-profile")}
+                onClick={() => navigate("/ProfileCreate")}
                 className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
               >
                 Profile
