@@ -4,6 +4,11 @@ import Navbar from "../Component/Navbar";
 import Footer from "../Component/Footer";
 
 function MySwap() {
+
+  // Common Profile Image
+  const profileImg =
+    "https://png.pngtree.com/png-clipart/20200224/original/pngtree-avatar-icon-profile-icon-member-login-vector-isolated-png-image_5247852.jpg";
+
   const activeSwaps = [
     {
       title: "Learning Python",
@@ -11,7 +16,7 @@ function MySwap() {
       name: "Sarah Jenkins",
       session: "Next Session: Thursday, 4 PM",
       progress: "65%",
-      img: "https://i.pravatar.cc/40",
+      img: profileImg,
     },
     {
       title: "Learning UI Design",
@@ -19,7 +24,7 @@ function MySwap() {
       name: "Marc Laurent",
       session: "Next Session: Monday, 10 AM",
       progress: "30%",
-      img: "https://i.pravatar.cc/41",
+      img: profileImg,
     },
   ];
 
@@ -27,7 +32,7 @@ function MySwap() {
     {
       name: "Alex Thorne",
       text: "Cooking for SEO",
-      img: "https://i.pravatar.cc/42",
+      img: profileImg,
     },
   ];
 
@@ -108,7 +113,11 @@ function MySwap() {
                 </p>
 
                 <div className="flex items-center mb-4">
-                  <img src={swap.img} alt="" className="rounded-full mr-3" />
+                  <img
+                    src={swap.img}
+                    alt="Profile"
+                    className="w-12 h-12 rounded-full mr-3 object-cover"
+                  />
                   <div>
                     <p className="font-medium">{swap.name}</p>
                     <p className="text-sm text-gray-500">
@@ -140,7 +149,11 @@ function MySwap() {
                 className="bg-white p-4 rounded-xl shadow flex justify-between items-center"
               >
                 <div className="flex items-center">
-                  <img src={req.img} alt="" className="rounded-full mr-4" />
+                  <img
+                    src={req.img}
+                    alt="Profile"
+                    className="w-12 h-12 rounded-full mr-4 object-cover"
+                  />
 
                   <div>
                     <p className="font-medium">
@@ -204,7 +217,7 @@ function MySwap() {
         </div>
       </div>
 
-      {/* ✅ FULL WIDTH FOOTER */}
+      {/* FOOTER */}
       <Footer />
 
     </div>

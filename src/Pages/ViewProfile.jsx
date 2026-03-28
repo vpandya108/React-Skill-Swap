@@ -34,10 +34,11 @@ function ViewProfile() {
         {/* LEFT PROFILE CARD */}
         <div className="bg-white rounded-xl shadow p-6 text-center">
 
+          {/* ✅ UPDATED IMAGE */}
           <img
-            src="https://i.pravatar.cc/100"
-            alt=""
-            className="mx-auto rounded-full w-24 h-24 mb-3"
+            src="https://png.pngtree.com/png-clipart/20200224/original/pngtree-avatar-icon-profile-icon-member-login-vector-isolated-png-image_5247852.jpg"
+            alt="Profile"
+            className="mx-auto rounded-full w-24 h-24 mb-3 object-cover"
           />
 
           <h2 className="text-lg font-semibold">{user.name}</h2>
@@ -145,6 +146,7 @@ function ViewProfile() {
                 <img
                   src="https://i.pravatar.cc/40"
                   className="rounded-full"
+                  alt=""
                 />
 
                 <div>
@@ -159,6 +161,7 @@ function ViewProfile() {
                 <img
                   src="https://i.pravatar.cc/41"
                   className="rounded-full"
+                  alt=""
                 />
 
                 <div>

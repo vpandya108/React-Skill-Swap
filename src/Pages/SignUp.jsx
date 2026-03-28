@@ -3,6 +3,7 @@ import React from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import ProfileCreate from "./ProfileCreate";
+import Login from "./Login";
 import { FaUser, FaEnvelope, FaLock, FaGraduationCap } from "react-icons/fa";
 
 function SignUp() {

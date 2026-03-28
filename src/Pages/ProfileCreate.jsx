@@ -12,6 +12,7 @@ function ProfileCreate() {
 
   const [formData, setFormData] = useState({
     profilePhoto: null,
+    
     bio: "",
     location: "",
     skillTeach: "",

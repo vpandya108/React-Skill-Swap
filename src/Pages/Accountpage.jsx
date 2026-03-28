@@ -1,9 +1,21 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Accountpage() {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Remove user data (if stored)
+    localStorage.removeItem("user");
+
+    // Redirect to login page
+    navigate("/login");
+  };
+
   const user = {
-    name: "Vishva Pandya",
-    email: "vishva@email.com",
+    name: "XYZ",
+    email: "XYZ@email.com",
     skill: "Web Development",
     location: "India",
     rating: "4.8",
@@ -17,9 +29,19 @@ function Accountpage() {
       {/* Header */}
       <div className="max-w-5xl mx-auto bg-white rounded-xl shadow p-6 mb-6 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-blue-600">My Profile</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-          Edit Profile
-        </button>
+
+        <div className="flex gap-3">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            Edit Profile
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Main Layout */}
@@ -29,9 +51,9 @@ function Accountpage() {
         <div className="bg-white rounded-xl shadow p-6 text-center">
 
           <img
-            src="https://i.pravatar.cc/120"
+            src="https://pngtree.com/freepng/avatar-icon-profile-icon-member-login-vector-isolated_5247852.html"
             className="w-28 h-28 rounded-full mx-auto mb-3"
-            alt=""
+            alt="Profile"
           />
 
           <h2 className="text-xl font-semibold">{user.name}</h2>

@@ -6,6 +6,10 @@ function Explore() {
 
   const [activeFilter, setActiveFilter] = useState("All Skills");
 
+  // ✅ Common Profile Image
+  const profileImg =
+    "https://png.pngtree.com/png-clipart/20200224/original/pngtree-avatar-icon-profile-icon-member-login-vector-isolated-png-image_5247852.jpg";
+
   const users = [
     {
       name: "Elena Rodriguez",
@@ -162,9 +166,9 @@ function Explore() {
 
               <div className="flex items-center gap-3 mb-3">
                 <img
-                  src={`https://i.pravatar.cc/40?img=${index + 10}`}
-                  className="rounded-full"
-                  alt=""
+                  src={profileImg}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full object-cover"
                 />
                 <div>
                   <h3 className="font-semibold">{user.name}</h3>
