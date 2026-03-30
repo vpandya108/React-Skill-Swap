@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import ProfileCreate from "./ProfileCreate";
@@ -9,10 +8,47 @@ import { FaUser, FaEnvelope, FaLock, FaGraduationCap } from "react-icons/fa";
 function SignUp() {
   const navigate = useNavigate();
 
-  const handleSignUp = (e) => {
-    e.preventDefault(); // stop page refresh
-    // You can add validation here later
-    navigate("/ProfileCreate"); // redirect to profile creation page
+  // ✅ STATE
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    skill: ""
+    
+  });
+
+  // ✅ HANDLE INPUT
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  // ✅ HANDLE SUBMIT WITH API
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("http://localhost:5000/api/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      alert("User Registered Successfully ✅");
+
+      navigate("/ProfileCreate");
+
+    } catch (err) {
+      console.log(err);
+      alert("Error ❌");
+    }
   };
 
   return (
@@ -77,8 +113,10 @@ function SignUp() {
                 <FaUser className="text-gray-400 mr-2" />
                 <input
                   type="text"
+                  name="name"
                   placeholder="Enter your full name"
                   className="w-full outline-none"
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -90,8 +128,10 @@ function SignUp() {
                 <FaEnvelope className="text-gray-400 mr-2" />
                 <input
                   type="email"
+                  name="email"
                   placeholder="name@company.com"
                   className="w-full outline-none"
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -103,8 +143,10 @@ function SignUp() {
                 <FaLock className="text-gray-400 mr-2" />
                 <input
                   type="password"
+                  name="password"
                   placeholder="••••••••"
                   className="w-full outline-none"
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -116,8 +158,10 @@ function SignUp() {
                 <FaGraduationCap className="text-gray-400 mr-2" />
                 <input
                   type="text"
+                  name="skill"
                   placeholder="Select your area of expertise"
                   className="w-full outline-none"
+                  onChange={handleChange}
                 />
               </div>
             </div>
