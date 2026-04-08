@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../Component/Footer";
 
-export default function HomeScren() {
+export default function HomeScreen() {
+
+  const [userName, setUserName] = useState("User");
+
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  // ✅ FETCH LOGGED IN USER NAME
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setUserName(data.name);
+      } catch (err) {
+        console.log("Error:", err);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <div className="bg-gray-100 min-h-screen">
 
@@ -32,10 +55,10 @@ export default function HomeScren() {
       {/* MAIN */}
       <div className="max-w-7xl mx-auto px-6 py-6">
 
-        {/* Welcome */}
+        {/* ✅ Welcome - Now Dynamic */}
         <div className="bg-blue-600 text-white rounded-xl p-10 mb-8">
           <h1 className="text-4xl font-bold mb-3">
-            Welcome to Skill Swap, user!
+            Welcome to Skill Swap, {userName}! 👋
           </h1>
           <p className="text-lg mb-6">
             Ready to learn something new? Connect with experts and share your skills.
@@ -74,9 +97,7 @@ export default function HomeScren() {
               Recommended Skills for You
             </h2>
 
-            {/* FIXED CARD GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
               {[
                 {
                   title: "Digital Photography",
@@ -107,8 +128,6 @@ export default function HomeScren() {
                   key={index}
                   className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
                 >
-
-                  {/* IMAGE */}
                   <div className="h-48 w-full overflow-hidden">
                     <img
                       src={card.img}
@@ -118,7 +137,6 @@ export default function HomeScren() {
                     />
                   </div>
 
-                  {/* CONTENT */}
                   <div className="p-4 flex flex-col justify-between h-[140px]">
                     <div>
                       <h3 className="font-semibold text-lg">{card.title}</h3>
@@ -126,19 +144,14 @@ export default function HomeScren() {
                     </div>
 
                     <div className="flex justify-between items-center mt-2">
-                      <span className="text-sm text-gray-500">
-                        {card.user}
-                      </span>
-
+                      <span className="text-sm text-gray-500">{card.user}</span>
                       <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
                         Swap
                       </button>
                     </div>
                   </div>
-
                 </div>
               ))}
-
             </div>
           </div>
 
@@ -171,7 +184,6 @@ export default function HomeScren() {
                   <p className="text-3xl font-bold">0</p>
                   <p className="text-sm text-gray-400">Skills Learned</p>
                 </div>
-
                 <div>
                   <p className="text-3xl font-bold">1</p>
                   <p className="text-sm text-gray-400">Skills Offered</p>
@@ -182,11 +194,9 @@ export default function HomeScren() {
             {/* Recent */}
             <div className="bg-white p-6 rounded-xl shadow">
               <h3 className="font-semibold mb-4">Recent Swaps</h3>
-
               <p className="text-sm text-gray-500">
                 Anna learned <span className="text-blue-600">Piano</span> from Lucas.
               </p>
-
               <p className="text-sm text-gray-500">
                 Sam listed <span className="text-blue-600">Spanish</span>.
               </p>
