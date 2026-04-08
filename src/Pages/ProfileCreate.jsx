@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 function ProfileCreate() {
   const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
+  console.log(userId); // to check
   const handleProfileCreate = (e) => {
     e.preventDefault(); // stop page refresh
     // You can add validation here later
@@ -12,7 +14,7 @@ function ProfileCreate() {
 
   const [formData, setFormData] = useState({
     profilePhoto: null,
-    
+
     bio: "",
     location: "",
     skillTeach: "",
@@ -30,41 +32,59 @@ function ProfileCreate() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      !formData.bio ||
+      !formData.location ||
+      !formData.skillTeach ||
+      !formData.skillLearn
+    ) {
+      alert("Please fill all fields ❌");
+      return;
+    }
 
-    const data = new FormData();
-    data.append("profilePhoto", formData.profilePhoto);
-    data.append("bio", formData.bio);
-    data.append("location", formData.location);
-    data.append("skillTeach", formData.skillTeach);
-    data.append("certificate", formData.certificate);
-    data.append("skillLearn", formData.skillLearn);
+    const userId = localStorage.getItem("userId");
 
-    // Example API call (connect with your backend)
-    fetch("http://localhost:5000/api/profile", {
-      method: "POST",
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Success:", data);
-        alert("Profile Saved!");
-      })
-      .catch((err) => console.error(err));
+    const data = {
+      bio: formData.bio,
+      location: formData.location,
+      skillTeach: formData.skillTeach,
+      skillLearn: formData.skillLearn,
+    };
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/users/update/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
+          body: JSON.stringify(data),
+        },
+      );
+
+      const result = await res.json();
+      console.log(result);
+
+      alert("Profile Saved ✅");
+      navigate("/HomeScreen");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-2xl">
-        
         <h1 className="text-3xl font-bold mb-2">Complete Your Profile</h1>
         <p className="text-gray-600 mb-6">
           Tell the community more about your skills
         </p>
 
-        <form onSubmit={handleProfileCreate} className="space-y-6">
-          
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Profile Photo */}
           <div>
             <label className="block font-medium mb-2">Profile Photo</label>
@@ -117,7 +137,9 @@ function ProfileCreate() {
 
           {/* Certification Upload */}
           <div>
-            <label className="block font-medium mb-2">Upload Certification</label>
+            <label className="block font-medium mb-2">
+              Upload Certification
+            </label>
             <input
               type="file"
               name="certificate"
@@ -128,7 +150,9 @@ function ProfileCreate() {
 
           {/* Skill I Want to Learn */}
           <div>
-            <label className="block font-medium mb-2">Skill I Want to Learn</label>
+            <label className="block font-medium mb-2">
+              Skill I Want to Learn
+            </label>
             <input
               type="text"
               name="skillLearn"
@@ -145,7 +169,6 @@ function ProfileCreate() {
           >
             Save Profile →
           </button>
-
         </form>
       </div>
     </div>

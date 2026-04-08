@@ -1,62 +1,74 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
-import ProfileCreate from "./ProfileCreate";
-import Login from "./Login";
 import { FaUser, FaEnvelope, FaLock, FaGraduationCap } from "react-icons/fa";
 
 function SignUp() {
   const navigate = useNavigate();
 
-  // ✅ STATE
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    skill: ""
-    
+    skillTeach: "",
   });
 
-  // ✅ HANDLE INPUT
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-  // ✅ HANDLE SUBMIT WITH API
+  // ✅ FIXED HANDLE SUBMIT
   const handleSignUp = async (e) => {
     e.preventDefault();
+
+    // ✅ Basic frontend validation
+    if (!formData.name || !formData.email || !formData.password) {
+      alert("Please fill all required fields ❌");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:5000/api/users/register", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
-      console.log(data);
+
+      // ✅ Check if response failed
+      if (!res.ok) {
+        alert("Error: " + (data.message || "Registration failed ❌"));
+        return;
+      }
+
+      // ✅ Save token and user id
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.user._id);
 
       alert("User Registered Successfully ✅");
-
       navigate("/ProfileCreate");
 
     } catch (err) {
-      console.log(err);
-      alert("Error ❌");
+      alert("Server error: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex">
-      
       {/* LEFT SIDE */}
       <div className="hidden md:flex w-1/2 relative bg-gradient-to-br from-green-900 via-black to-green-800 text-white p-10 flex-col justify-center">
-        
         <h2 className="text-2xl font-semibold text-blue-400 mb-6">
           ◇ SkillSwap
         </h2>
@@ -71,33 +83,22 @@ function SignUp() {
         </p>
 
         <div className="flex gap-4">
-          
           <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl">
             <h3 className="font-semibold">Expert Instructors</h3>
-            <p className="text-sm text-gray-300">
-              Learn from industry leaders
-            </p>
+            <p className="text-sm text-gray-300">Learn from industry leaders</p>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl">
             <h3 className="font-semibold">Global Community</h3>
-            <p className="text-sm text-gray-300">
-              Connect with peers worldwide
-            </p>
+            <p className="text-sm text-gray-300">Connect with peers worldwide</p>
           </div>
-
         </div>
-
       </div>
 
       {/* RIGHT SIDE */}
       <div className="w-full md:w-1/2 flex items-center justify-center bg-gray-100 px-6">
-        
         <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow">
-
-          <h1 className="text-3xl font-bold mb-2">
-            Join the community
-          </h1>
+          <h1 className="text-3xl font-bold mb-2">Join the community</h1>
 
           <p className="text-gray-600 text-sm mb-6">
             Start your learning journey with Skill Swap today
@@ -105,7 +106,6 @@ function SignUp() {
 
           {/* FORM */}
           <form onSubmit={handleSignUp} className="space-y-4">
-            
             {/* Name */}
             <div>
               <label className="text-sm font-medium">Full Name</label>
@@ -117,6 +117,7 @@ function SignUp() {
                   placeholder="Enter your full name"
                   className="w-full outline-none"
                   onChange={handleChange}
+                  value={formData.name}
                 />
               </div>
             </div>
@@ -132,6 +133,7 @@ function SignUp() {
                   placeholder="name@company.com"
                   className="w-full outline-none"
                   onChange={handleChange}
+                  value={formData.email}
                 />
               </div>
             </div>
@@ -147,6 +149,7 @@ function SignUp() {
                   placeholder="••••••••"
                   className="w-full outline-none"
                   onChange={handleChange}
+                  value={formData.password}
                 />
               </div>
             </div>
@@ -158,27 +161,29 @@ function SignUp() {
                 <FaGraduationCap className="text-gray-400 mr-2" />
                 <input
                   type="text"
-                  name="skill"
+                  name="skillTeach"
                   placeholder="Select your area of expertise"
                   className="w-full outline-none"
                   onChange={handleChange}
+                  value={formData.skillTeach}
                 />
               </div>
             </div>
 
-            {/* Button */}
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mt-2">
-              Create Account →
+            {/* ✅ Button shows loading state */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mt-2 disabled:opacity-50"
+            >
+              {loading ? "Creating Account..." : "Create Account →"}
             </button>
-
           </form>
 
           {/* Divider */}
           <div className="flex items-center my-6">
             <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-3 text-sm text-gray-500">
-              Or Sign up with
-            </span>
+            <span className="px-3 text-sm text-gray-500">Or Sign up with</span>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
@@ -191,13 +196,14 @@ function SignUp() {
           {/* Login link */}
           <p className="text-sm text-center mt-6">
             Already have an account?{" "}
-            <span className="text-blue-500 cursor-pointer hover:underline">
+            <span
+              className="text-blue-500 cursor-pointer hover:underline"
+              onClick={() => navigate("/login")}
+            >
               login here
             </span>
           </p>
-
         </div>
-
       </div>
     </div>
   );

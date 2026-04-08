@@ -1,17 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
 
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleLogin = (e) => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault(); // stop page refresh
+    setErrorMsg("");
 
-    // You can add validation here later
+    try {
+      const res = await fetch("http://localhost:5000/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    navigate("/HomeScreen"); // redirect to dashboard
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.token); // 🔐 save JWT
+        localStorage.setItem("userId", data.user._id); // ✅ save user id
+        alert("Login successful ✅");
+        navigate("/HomeScreen"); // redirect to dashboard
+      } else {
+        setErrorMsg(data.message || "Invalid credentials ❌");
+      }
+
+    } catch (err) {
+      console.log(err);
+      setErrorMsg("Error connecting to server ❌");
+    }
   };
 
   return (
@@ -56,11 +90,21 @@ function Login() {
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             
+            {errorMsg && (
+              <div className="bg-red-100 text-red-600 p-2 rounded text-sm mb-4">
+                {errorMsg}
+              </div>
+            )}
+
             <div>
               <label className="text-sm font-medium">Email Address</label>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="name@company.com"
+                required
                 className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
@@ -75,7 +119,11 @@ function Login() {
 
               <input
                 type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="••••••••"
+                required
                 className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
@@ -112,9 +160,9 @@ function Login() {
           {/* Signup */}
           <p className="text-sm text-center mt-6">
             Don’t have an account?{" "}
-            <span className="text-blue-500 cursor-pointer hover:underline">
+            <Link to="/SignUp" className="text-blue-500 cursor-pointer hover:underline">
               Create an account
-            </span>
+            </Link>
           </p>
 
         </div>
