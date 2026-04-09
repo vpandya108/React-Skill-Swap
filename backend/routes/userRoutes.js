@@ -4,7 +4,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
-
+const upload = require("../middleware/upload");
 
 // 🔥 REGISTER API
 router.post("/register", async (req, res) => {
@@ -21,26 +21,11 @@ router.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword
-    });
-
+    const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
-    const token = jwt.sign(
-      { id: user._id },
-      "secretkey",
-      { expiresIn: "1d" }
-    );
-
-    res.json({
-      message: "User registered successfully",
-      token,
-      user
-    });
+    const token = jwt.sign({ id: user._id }, "secretkey", { expiresIn: "1d" });
+    res.json({ message: "User registered successfully", token, user });
 
   } catch (err) {
     res.status(500).json(err);
@@ -67,17 +52,8 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid password ❌" });
     }
 
-    const token = jwt.sign(
-      { id: user._id },
-      "secretkey",
-      { expiresIn: "1d" }
-    );
-
-    res.json({
-      message: "Login successful ✅",
-      token,
-      user
-    });
+    const token = jwt.sign({ id: user._id }, "secretkey", { expiresIn: "1d" });
+    res.json({ message: "Login successful ✅", token, user });
 
   } catch (err) {
     res.status(500).json(err);
@@ -85,19 +61,25 @@ router.post("/login", async (req, res) => {
 });
 
 
-// 🔥 UPDATE PROFILE (Protected)
-router.put("/update/:id", auth, async (req, res) => {
+// 🔥 UPDATE PROFILE WITH FILE UPLOAD (Protected)
+router.put("/update/:id", auth, upload.fields([
+  { name: "profilePhoto", maxCount: 1 },
+  { name: "certificate", maxCount: 1 }
+]), async (req, res) => {
   try {
     const { bio, location, skillTeach, skillLearn } = req.body;
+    const updateData = { bio, location, skillTeach, skillLearn };
+
+    if (req.files?.profilePhoto) {
+      updateData.profilePhoto = "http://localhost:5000/uploads/" + req.files.profilePhoto[0].filename;
+    }
+    if (req.files?.certificate) {
+      updateData.certificate = "http://localhost:5000/uploads/" + req.files.certificate[0].filename;
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      {
-        bio,
-        location,
-        skillTeach,
-        skillLearn
-      },
+      updateData,
       { new: true }
     );
 
@@ -109,33 +91,10 @@ router.put("/update/:id", auth, async (req, res) => {
 });
 
 
-// 🔥 GET SINGLE USER (Protected)
-router.get("/:id", auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    res.json(user);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-
-// 🔥 GET ALL USERS (Public)
-router.get("/", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-
 // 🔥 SEND SWAP REQUEST (Protected)
 router.post("/swap-request/:id", auth, async (req, res) => {
   try {
     const { skillOffered, skillWanted } = req.body;
-
     const sender = await User.findById(req.user.id);
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -153,10 +112,7 @@ router.post("/swap-request/:id", auth, async (req, res) => {
       { new: true }
     );
 
-    res.json({
-      message: "Swap request sent ✅",
-      updatedUser
-    });
+    res.json({ message: "Swap request sent ✅", updatedUser });
 
   } catch (err) {
     res.status(500).json(err);
@@ -164,7 +120,7 @@ router.post("/swap-request/:id", auth, async (req, res) => {
 });
 
 
-// 🔥 GET SWAP REQUESTS (Protected)
+// ✅ BEFORE /:id — GET SWAP REQUESTS (Protected)
 router.get("/swap-requests/:id", auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -174,7 +130,33 @@ router.get("/swap-requests/:id", auth, async (req, res) => {
   }
 });
 
-// 🔥 ACCEPT SWAP REQUEST
+
+// ✅ BEFORE /:id — GET UNREAD NOTIFICATIONS COUNT (Protected)
+router.get("/notifications/:id", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    const unread = user.swapRequests.filter(r => r.status === "pending" && !r.seen).length;
+    res.json({ count: unread, requests: user.swapRequests.filter(r => !r.seen) });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
+// ✅ BEFORE /:id — MARK NOTIFICATIONS AS SEEN (Protected)
+router.put("/notifications/seen/:id", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    user.swapRequests.forEach(r => r.seen = true);
+    await user.save();
+    res.json({ message: "Notifications marked as seen" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
+// ✅ BEFORE /:id — ACCEPT SWAP REQUEST (Protected)
 router.put("/swap-request/accept/:userId/:requestId", auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
@@ -187,7 +169,8 @@ router.put("/swap-request/accept/:userId/:requestId", auth, async (req, res) => 
   }
 });
 
-// 🔥 DECLINE SWAP REQUEST
+
+// ✅ BEFORE /:id — DECLINE SWAP REQUEST (Protected)
 router.put("/swap-request/decline/:userId/:requestId", auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
@@ -199,5 +182,28 @@ router.put("/swap-request/decline/:userId/:requestId", auth, async (req, res) =>
     res.status(500).json(err);
   }
 });
+
+
+// 🔥 GET ALL USERS (Public)
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
+// ✅ ALWAYS LAST — GET SINGLE USER (Protected)
+router.get("/:id", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.json(user);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 
 module.exports = router;

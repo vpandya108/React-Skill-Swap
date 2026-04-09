@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
+const path=require("path")
 const userRoutes = require("./routes/userRoutes");
 
 const app = express();
@@ -9,6 +9,7 @@ const app = express();
 // middleware
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // MongoDB connection
 mongoose.connect("mongodb://127.0.0.1:27017/Skill-Swap-react")

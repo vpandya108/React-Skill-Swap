@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../Component/Footer";
+import NotificationBell from "../Component/Notificationbell";
 
 export default function HomeScreen() {
 
@@ -51,7 +52,7 @@ export default function HomeScreen() {
 
         </div>
       </div>
-
+    <NotificationBell />
       {/* MAIN */}
       <div className="max-w-7xl mx-auto px-6 py-6">
 

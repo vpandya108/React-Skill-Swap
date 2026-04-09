@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
       fromUserName: String,
       skillOffered: String,
       skillWanted: String,
-      status: { type: String, default: "pending" }
+      status: { type: String, default: "pending" },
+      seen: { type: Boolean, default: false }
     }
   ]
 
