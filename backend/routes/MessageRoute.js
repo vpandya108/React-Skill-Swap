@@ -32,7 +32,6 @@ router.get("/conversation/:otherUserId", auth, async (req, res) => {
     res.status(500).json(err);
   }
 });
-
 // 🔥 GET CONTACTS (accepted swap partners)
 router.get("/contacts", auth, async (req, res) => {
   try {
