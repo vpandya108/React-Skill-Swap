@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 function NotificationBell() {
   const [count, setCount] = useState(0);
   const [requests, setRequests] = useState([]);
